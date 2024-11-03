@@ -293,6 +293,8 @@ The API uses Laravel Sanctum for authentication. Follow these steps to obtain a 
 | `name`          | `string` | **Required**. Name of the project                   |
 | `description`   | `string` | **Optional**. Description of the project            |
 | `type`          | `string` | **Required**. Type of project (e.g., Standard, Complex) |
+| `budget`        | `number` | **Required if type of project is complex**. |
+| `timeline`        | `date` | **Required if type of project is complex**. |
 | `company_id`    | `string` | **Required**. ID of the associated company          |
 | `Authorization` | `string` | **Required**. Bearer token for authentication       |
 
@@ -308,6 +310,8 @@ The API uses Laravel Sanctum for authentication. Follow these steps to obtain a 
 | `name`          | `string` | **Optional**. New name of the project               |
 | `description`   | `string` | **Optional**. New description of the project        |
 | `type`          | `string` | **Optional**. New type of project                   |
+| `budget`        | `number` | **Required if type of project is complex**. |
+| `timeline`        | `date` | **Required if type of project is complex**. |
 | `Authorization` | `string` | **Required**. Bearer token for authentication       |
 
 #### Delete a project
