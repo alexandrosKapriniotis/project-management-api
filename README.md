@@ -136,19 +136,22 @@ The API uses Laravel Sanctum for authentication. Follow these steps to obtain a 
 
 ### User Endpoints
 
-#### Register a new user
+#### Register a new user (Admin only)
 
 ```http
-  POST /api/register
+  POST /api/users
 ```
 
-| Parameter       | Type     | Description                                   |
-| :-------------- | :------- | :-------------------------------------------- |
-| `name`          | `string` | **Required**. Name of the user                |
-| `email`         | `string` | **Required**. Email address of the user       |
-| `password`      | `string` | **Required**. Password for the user           |
-| `password_confirmation` | `string` | **Required**. Confirm password  |
-| `Authorization` | `string` | **Required**. Bearer token for authentication (admin access) |
+| Parameter              | Type     | Description                                   |
+| :--------------------- | :------- | :-------------------------------------------- |
+| `name`                 | `string` | **Required**. Name of the user                |
+| `email`                | `string` | **Required**. Email address of the user       |
+| `password`             | `string` | **Required**. Password for the user           |
+| `password_confirmation`| `string` | **Required**. Confirm password                |
+| `Authorization`        | `string` | **Required**. Bearer token for authentication (admin access) |
+
+> **Note**: Only admins can create (register) new users.
+
 
 #### Get all users
 
