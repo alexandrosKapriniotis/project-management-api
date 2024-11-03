@@ -18,7 +18,6 @@ class User extends Authenticatable
 
     protected $keyType = 'string';
     public $incrementing = false;
-    protected string $guard_name = 'api';
 
     /**
      * The attributes that are mass assignable.

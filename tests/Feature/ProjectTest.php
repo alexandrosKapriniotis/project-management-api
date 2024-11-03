@@ -11,8 +11,8 @@ use function Pest\Laravel\{actingAs};
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'api']);
-    Role::firstOrCreate(['name' => 'User', 'guard_name' => 'api']);
+    Role::firstOrCreate(['name' => 'Admin']);
+    Role::firstOrCreate(['name' => 'User']);
 
     $this->admin = User::factory()->create();
     $this->admin->assignRole('Admin');
@@ -36,7 +36,7 @@ it('allows admin to create a project', function () {
 });
 
 it('prevents non-admin from updating a project', function () {
-    $project = Project::factory()->create(['company_id' => $this->company->id]);
+    $project = Project::factory()->create(['company_id' => $this->company->id, 'type' => ProjectType::Standard->value]);
 
     actingAs($this->user)
         ->putJson("/api/projects/{$project->id}", [
@@ -54,5 +54,51 @@ it('allows admin to delete a project', function () {
         ->deleteJson("/api/projects/{$project->id}")
         ->assertStatus(200)
         ->assertJson(['message' => 'Project deleted successfully.']);
+});
+
+it('requires budget and timeline for complex projects', function () {
+    actingAs($this->admin)
+        ->postJson('/api/projects', [
+            'name' => 'Complex Project',
+            'description' => 'Project Description',
+            'type' => ProjectType::Complex->value,
+            'company_id' => $this->company->id,
+        ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['budget', 'timeline']);
+});
+
+it('does not require budget and timeline for standard projects', function () {
+    actingAs($this->admin)
+        ->postJson('/api/projects', [
+            'name' => 'Standard Project',
+            'description' => 'Project Description',
+            'type' => ProjectType::Standard->value,
+            'company_id' => $this->company->id,
+        ])
+        ->assertStatus(201)
+        ->assertJson(['name' => 'Standard Project']);
+});
+
+it('allows admin to view all projects', function () {
+    Project::factory()->count(3)->create(['company_id' => $this->company->id]);
+
+    actingAs($this->admin)
+        ->getJson('/api/projects')
+        ->assertStatus(200)
+        ->assertJsonCount(3, 'data');
+});
+
+it('prevents regular user from viewing projects of other companies', function () {
+    $otherCompany = Company::factory()->create();
+    Project::factory()->count(2)->create(['company_id' => $this->company->id]);
+    Project::factory()->count(2)->create(['company_id' => $otherCompany->id]);
+
+    $this->user->companies()->attach($this->company->id);
+
+    actingAs($this->user)
+        ->getJson('/api/projects')
+        ->assertStatus(200)
+        ->assertJsonCount(2, 'data');
 });
 
