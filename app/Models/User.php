@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,7 +58,6 @@ class User extends Authenticatable
             $user->assignRole('User');
         });
     }
-
 
     public function companies(): BelongsToMany
     {

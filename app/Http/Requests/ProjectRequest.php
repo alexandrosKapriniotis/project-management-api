@@ -8,15 +8,15 @@ use Illuminate\Validation\Rules\Enum;
 
 class ProjectRequest extends FormRequest
 {
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'type' => ['required', new Enum(ProjectType::class)],
             'company_id' => 'required|exists:companies,id',
-            'budget' => 'nullable|numeric|min:0',
-            'timeline' => 'nullable|date',
+            'budget' => 'numeric|min:0|required_if:type,' . ProjectType::Complex->value,
+            'timeline' => 'date|required_if:type,' . ProjectType::Complex->value,
         ];
     }
 }

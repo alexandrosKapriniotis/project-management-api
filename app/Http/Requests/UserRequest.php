@@ -10,8 +10,14 @@ class UserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $this->user,
-            'password' => 'required|string|min:8|confirmed',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email,' . ($this->user ? $this->user->id : 'NULL'),
+            ],
+            'password' => $this->isMethod('post')
+                ? 'required|string|min:8|confirmed'
+                : 'nullable|string|min:8|confirmed',
         ];
     }
 }

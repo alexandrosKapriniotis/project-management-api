@@ -16,6 +16,7 @@ class ProjectSeeder extends Seeder
         $companies = Company::all();
 
         foreach ($companies as $company) {
+            // Create 3 projects for each company
             Project::factory(3)->create([
                 'company_id' => $company->id,
             ]);
