@@ -12,9 +12,13 @@ class Project extends Model
 {
     use HasFactory, HasUlids;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+    
     protected $casts = [
         'type' => ProjectType::class,
     ];
+
     protected $fillable = ['name', 'description', 'type', 'company_id', 'budget', 'timeline'];
 
     public function company(): BelongsTo
