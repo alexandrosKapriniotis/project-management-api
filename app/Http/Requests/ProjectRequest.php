@@ -8,6 +8,16 @@ use Illuminate\Validation\Rules\Enum;
 
 class ProjectRequest extends FormRequest
 {
+    public function authorize(): bool
+    {    
+        if ($this->user()->hasRole('Admin')) {
+            return true;
+        }
+
+        // For non-admin users, ensure they belong to the company they’re trying to assign the project to
+        return $this->user()->companies()->pluck('id')->contains($this->input('company_id'));
+    }
+
     public function rules(): array
     {
         return [

@@ -9,7 +9,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Role;
 
 class NotifyAdminsOfNewUser implements ShouldQueue
 {
@@ -35,12 +34,14 @@ class NotifyAdminsOfNewUser implements ShouldQueue
      */
     public function handle(): void
     {
-        $admins = User::whereHas('roles', function ($query) {
-            $query->where('name', 'Admin');
-        })->get();
-
-        foreach ($admins as $admin) {
-            Log::info("Admin {$admin->email} notified about new user: {$this->newUser->email}");
-        }
+        User::select('id','email')
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'Admin');
+            })
+            ->chunkById(100, function ($admins) {
+                foreach ($admins as $admin) {
+                    Log::info("Admin {$admin->email} notified about new user: {$this->newUser->email}");
+                }
+            });
     }
 }
